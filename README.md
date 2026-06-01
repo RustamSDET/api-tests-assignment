@@ -1,4 +1,4 @@
-# QIWI Payout API Tests
+# QIWI API Tests
 
 Проект содержит автотесты для QIWI Payout API на базе Pytest, Playwright (в качестве HTTP-клиента) и Pydantic v2, а также коллекцию запросов Postman.
 
