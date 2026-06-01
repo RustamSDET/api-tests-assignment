@@ -1,0 +1,267 @@
+{
+  "info": {
+    "_postman_id": "8d766859-7088-4b01-bd8e-9615c3dd896e",
+    "name": "Тестовое",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37008546"
+  },
+  "item": [
+    {
+      "name": "Получить все платежи",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://{{base_url}}/partner/payout/v1/agents/12345/points/67890/payments?limit=20&offset=0",
+          "protocol": "https",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "partner",
+            "payout",
+            "v1",
+            "agents",
+            "12345",
+            "points",
+            "67890",
+            "payments"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "20"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Запрос баланса",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Баланс больше 0\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var balanceValue = parseFloat(jsonData.balance.value);",
+              "    pm.expect(balanceValue).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://{{base_url}}{/partner/payout/v1/agents/12345/points/67890/balance",
+          "protocol": "https",
+          "host": [
+            "{{base_url}}{"
+          ],
+          "path": [
+            "partner",
+            "payout",
+            "v1",
+            "agents",
+            "12345",
+            "points",
+            "67890",
+            "balance"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создание платежа 1 рубль",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const uuid = require('uuid');",
+              "pm.collectionVariables.set(\"paymentId\", uuid.v4());"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipientDetails\": {\n    \"providerCode\": \"qiwi-wallet\",\n    \"fields\": {\n      \"account\": \"79123456789\"\n    }\n  },\n  \"amount\": {\n    \"value\": \"1.00\",\n    \"currency\": \"RUB\"\n  },\n  \"source\": {\n    \"paymentType\": \"NO_EXTRA_CHARGE\",\n    \"paymentToolType\": \"BANK_ACCOUNT\",\n    \"paymentTerminalType\": \"INTERNET_BANKING\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://{{base_url}}/partner/payout/v1/agents/12345/points/67890/payments/{{paymentId}}",
+          "protocol": "https",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "partner",
+            "payout",
+            "v1",
+            "agents",
+            "12345",
+            "points",
+            "67890",
+            "payments",
+            "{{paymentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Исполнение платежа",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "{{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "https://{{base_url}}/partner/payout/v1/agents/12345/points/67890/payments/{{paymentId}}",
+          "protocol": "https",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "partner",
+            "payout",
+            "v1",
+            "agents",
+            "12345",
+            "points",
+            "67890",
+            "payments",
+            "{{paymentId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    }
+  ]
+}
